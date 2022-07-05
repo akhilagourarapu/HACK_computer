@@ -1,0 +1,44 @@
+/*8-bit 2 to 1 Multiplexor*/
+CHIP Mux8bit2to1 {
+    IN a[8], b[8],s;
+    OUT y[8];
+
+    PARTS:
+	Not(in=s, out=nots);
+	
+	//Taking And of Not(sel) and a[i] and And of sel and b[i]
+	And(a=nots, b=a[0], out=term00);
+	And(a=s, b=b[0], out=term01);
+
+        And(a=nots, b=a[1], out=term10);
+	And(a=s, b=b[1], out=term11);
+
+        And(a=nots, b=a[2], out=term20);
+	And(a=s, b=b[2], out=term21);
+
+        And(a=nots, b=a[3], out=term30);
+	And(a=s, b=b[3], out=term31);
+
+        And(a=nots, b=a[4], out=term40);
+	And(a=s, b=b[4], out=term41);
+
+        And(a=nots, b=a[5], out=term50);
+	And(a=s, b=b[5], out=term51);
+
+        And(a=nots, b=a[6], out=term60);
+	And(a=s, b=b[6], out=term61);
+
+        And(a=nots, b=a[7], out=term70);
+	And(a=s, b=b[7], out=term71);
+
+	// Taking Or of terms computed above to obtain corresponding output bit
+	Or(a=term00, b=term01, out=y[0]);
+	Or(a=term10, b=term11, out=y[1]);
+	Or(a=term20, b=term21, out=y[2]);
+	Or(a=term30, b=term31, out=y[3]);
+	Or(a=term40, b=term41, out=y[4]);
+	Or(a=term50, b=term51, out=y[5]);
+	Or(a=term60, b=term61, out=y[6]);
+	Or(a=term70, b=term71, out=y[7]);
+	
+}

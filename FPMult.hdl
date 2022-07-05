@@ -1,0 +1,39 @@
+/* 16-bit Floating Point Multiplier */
+
+CHIP FPMult{
+    IN x[16], y[16];
+    OUT out[16];
+
+    PARTS:
+	// Xs = x[15]
+	// Ys = y[15]
+	// Xm = x[0..6]
+	// Ym = y[0..6]
+	// Xe = x[7..14]
+	// Ye = y[7..14]
+	
+	// Calculating sign-bit
+	Xor(a=x[15], b=y[15], out=out[15]);
+
+	// Multiplying 8-bit mantissas: 1.Xm, 1.Ym
+	UnsignedMult(X[0..6]=x[0..6], X[7]=true, Y[0..6]=y[0..6], Y[7]=true, out[15]=Pm15, out[7..13]=Pm713, out[8..14]=Pm814);
+	
+	// Obtaining Zm based on Pm15 using a 7-bit 2-to-1 Mux
+	Mux7bit2to1(a=Pm713, b=Pm814, sel=Pm15, out=out[0..6]);
+
+	// Adding Xe and Ye using an 8-bit unsigned Adder
+	Adder8(x=x[7..14], y=y[7..14], abars=false, sig=false, s=z1, c8=c8, of=of);
+
+	// Subtraction of 9-bit Xe + Ye with bias=127 and bias-1=126 using a 16-bit Adder setting the 7-most significant bits of the inputs to zero and ignoring most significant 8-bits of output to subtract 9-bits and obtain 8-bit outputs
+	//abars=1 for subtraction, sig=0 for unisgned
+	Adder16(x[0..7]=z1, x[8]=c8, x[9..15]=false, y[0..6]=true, y[7..15]=false, abars=true, sig=false, s[0..7]=a1, s[8..15]=discard1, c16=cdisc1, of=of1);
+	Adder16(x[0..7]=z1, x[8]=c8, x[9..15]=false, y[0]=false, y[1..6]=true, y[7..15]=false, abars=true, sig=false, s[0..7]=a2, s[8..15]=discard2, c16=cdisc2, of=of2);
+	// Choosing between outputs of the two subtractors, to obtain Ze, using an 8-bit 2-to-1 Mux
+	Mux8bit2to1(a=a1, b=a2, s=Pm15, y=out[7..14]);
+
+	
+	
+	
+	
+
+}

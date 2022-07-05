@@ -1,0 +1,9 @@
+/* 16-bit computer */
+CHIP Computer {
+    IN reset;
+
+    PARTS:
+	    ROM32K(address=pc, out=instruc);  //stores instructions of length 32K*16 bit
+	    CPU(inM=m, instruction=instruc, reset=reset, outM=outm, writeM=load, addressM=addressm, pc=pc);  //execute instructions of length 32K*16 bit
+	    Memory(load=load, in=outm, address=addressm, out=m); //stores values of variables of length 32K*16 bit
+}

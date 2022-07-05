@@ -1,0 +1,46 @@
+/* 16-bit CLA Adder without higher order propagation and generation terms:
+
+X, Y = signed orinsigned 16-bit integers
+abars = 0 for addition, 1 for subtraction
+sig = 0 for unsigned integer, 1 for signed integer
+s = 16-bit sum bits
+c16 = last carry bit
+of = overflow bit
+*/
+CHIP Adder16 {
+    IN x[16], y[16], abars, sig;
+    OUT s[16], c16, of;
+
+    PARTS:
+	// Generating 1's complement form for abars = 1, for abars=0, no effect
+	Xor16(a=y, b=abars, out[0..3]=y30, out[4..7]=y74, out[8..11]=y118, 		out[12..15]=y1512);
+	
+	// Cascading carry look ahead adders to get sum bits and carry bits c4, c8, c12, c16
+	CLA(x=x[0..3], y=y30, c0=abars, s=s[0..3], c4=c4);
+	CLA(x=x[4..7], y=y74, c0=c4, s=s[4..7], c4=c8);
+	CLA(x=x[8..11], y=y118, c0=c8, s=s[8..11], c4=c12);
+	CLA(x=x[12..15], y=y1512, c0=c12, s=s[12..15], c4=c16test);
+	
+	// Generating complement of y[12..14]
+	Xor(a=y[12], b=abars, out=y12);
+	Xor(a=y[13], b=abars, out=y13);
+	Xor(a=y[14], b=abars, out=y14);
+	// Obtaining intermediate carries c12, c13, c14 to get c15 to check for overflow condition (using Full Adders since implemented CLA gate does not output intermediate carries)
+	FullAdder(xi=x[12], yi=y12, ci=c12, si=v, cii=c13);
+	FullAdder(xi=x[13], yi=y13, ci=c13, si=b, cii=c14);
+	FullAdder(xi=x[14], yi=y14, ci=c14, si=n, cii=c15);
+	
+	// checking for overflow condition for signed and unsigned:
+	// For signed: Xor(Cn, Cn-1)
+	// For unsigned: Cn
+	// Overflow = sig.Xor(Cn,Cn-1) + sig'.Cn
+	And(a=c16test, b=c16test, out=c16);
+	Xor(a=c15, b=c16test, out=signedof);
+	Not(in=sig, out=unsigned);
+	And(a=c16test, b=unsigned, out = t1);
+	And(a=signedof, b=sig, out=t2);
+	Or(a=t1, b=t2, out=of);
+	
+ 
+	
+}

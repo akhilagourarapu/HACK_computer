@@ -1,0 +1,65 @@
+/* Q1a. 8-bit Unsigned Integer Multiplier */
+CHIP UnsignedMult{
+    IN X[8], Y[8]; //multiplicand, multiplier
+    OUT out[16]; //output, overflow
+
+    PARTS:
+	// Generating X.yi and then shifting left by i bits to generate partial products
+	PPAnd(X=X, yi=Y[0], out=pp0);
+
+	PPAnd(X=X, yi=Y[1], out=out10);
+	ShiftLeft(in=out10, out=pp1);
+
+	PPAnd(X=X, yi=Y[2], out=out20);
+	ShiftLeft(in=out20, out=out21);
+	ShiftLeft(in=out21, out=pp2);
+
+	PPAnd(X=X, yi=Y[3], out=out30);
+	ShiftLeft(in=out30, out=out31);
+	ShiftLeft(in=out31, out=out32);
+	ShiftLeft(in=out32, out=pp3);
+
+	PPAnd(X=X, yi=Y[4], out=out40);
+	ShiftLeft(in=out40, out=out41);
+	ShiftLeft(in=out41, out=out42);
+	ShiftLeft(in=out42, out=out43);
+	ShiftLeft(in=out43, out=pp4);
+
+	PPAnd(X=X, yi=Y[5], out=out50);
+	ShiftLeft(in=out50, out=out51);
+	ShiftLeft(in=out51, out=out52);
+	ShiftLeft(in=out52, out=out53);
+	ShiftLeft(in=out53, out=out54);
+	ShiftLeft(in=out54, out=pp5);
+
+	PPAnd(X=X, yi=Y[6], out=out60);
+	ShiftLeft(in=out60, out=out61);
+	ShiftLeft(in=out61, out=out62);
+	ShiftLeft(in=out62, out=out63);
+	ShiftLeft(in=out63, out=out64);
+	ShiftLeft(in=out64, out=out65);
+	ShiftLeft(in=out65, out=pp6);
+
+	PPAnd(X=X, yi=Y[7], out=out70);
+	ShiftLeft(in=out70, out=out71);
+	ShiftLeft(in=out71, out=out72);
+	ShiftLeft(in=out72, out=out73);
+	ShiftLeft(in=out73, out=out74);
+	ShiftLeft(in=out74, out=out75);
+	ShiftLeft(in=out75, out=out76);
+	ShiftLeft(in=out76, out=pp7);
+
+	Reducer3to2(pp0=pp0, pp1=pp1, pp2=pp2, s=s10, c=c10);//summands: pp0, pp1, pp2
+	Reducer3to2(pp0=pp3, pp1=pp4, pp2=pp5, s=s11, c=c11);//summands: pp3, pp4, pp5 (pp6 and pp7 are processed in the next level)
+	
+	Reducer3to2(pp0=c10, pp1=s10, pp2=c11, s=s20, c=c20);
+	Reducer3to2(pp0=s11, pp1=pp6, pp2=pp7, s=s21, c=c21);
+
+	Reducer3to2(pp0=c20, pp1=s20, pp2=c21, s=s30, c=c30);
+	
+	Reducer3to2(pp0=c30, pp1=s30, pp2=s21, s=s40, c=c40);
+
+	//Adding c40 and s40 to generate final sum
+	Adder16(x=s40, y=c40, abars=false, sig=false, s=out, c16=c16, of=of);
+
+}

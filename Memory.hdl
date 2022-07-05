@@ -1,0 +1,26 @@
+/* 16-bit memory */
+CHIP Memory {
+    
+      IN in[16], load, address[15];
+      OUT out[16];
+
+      PARTS:
+   
+		DMux4Way(in=load, sel=address[13..14], a=loadrama, b=loadramb, c=loadscreen, d=loadkey);
+
+		Or(a=loadrama, b=loadramb, out=loadram);  //to get loadram
+
+		// if loadram is 1 in value is loaded into the memory location according to address  
+		RAM16K(in=in, load=loadram,    address=address[0..13], out=ramout);
+
+		//takes inputs of memory chip and gives necessary implementations and output memory bits 
+		Screen(in=in, load=loadscreen, address=address[0..12], out=screenout);
+
+		//takes input of memory bits and controls the display when we change the bytes the screen refreshes accordingly.
+		Keyboard(out=keyout);
+
+		//A 16 bit register which gives output bit according to the input we give through physical keyboard.    
+		Mux4Way16(a=ramout, b=ramout, c=screenout, d=keyout,sel=address[13..14], out=out);
+
+   
+}

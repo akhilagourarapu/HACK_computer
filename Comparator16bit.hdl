@@ -1,0 +1,43 @@
+/* 16-bit comparator
+Checks if X==Y */
+
+CHIP Comparator16bit{
+	IN x[16], y[16];
+	OUT z;
+	PARTS:
+	// Taking XNOR of each of the corresponding bits in X and Y
+	Xnor(a=x[0], b=y[0], out=t1);
+	Xnor(a=x[1], b=y[1], out=t2);
+	Xnor(a=x[2], b=y[2], out=t3);
+	Xnor(a=x[3], b=y[3], out=t4);
+	Xnor(a=x[4], b=y[4], out=t5);
+	Xnor(a=x[5], b=y[5], out=t6);
+	Xnor(a=x[6], b=y[6], out=t7);
+	Xnor(a=x[7], b=y[7], out=t8);
+	Xnor(a=x[8], b=y[8], out=t9);
+	Xnor(a=x[9], b=y[9], out=t10);
+	Xnor(a=x[10], b=y[10], out=t11);
+	Xnor(a=x[11], b=y[11], out=t12);
+	Xnor(a=x[12], b=y[12], out=t13);
+	Xnor(a=x[13], b=y[13], out=t14);
+	Xnor(a=x[14], b=y[14], out=t15);
+	Xnor(a=x[15], b=y[15], out=t16);
+
+	// Taking AND of all the XNOR output bits
+	And(a=t1, b=t2, out=z1);
+	And(a=z1, b=t3, out=z2);
+	And(a=z2, b=t4, out=z3);
+	And(a=z3, b=t5, out=z4);
+	And(a=z4, b=t6, out=z5);
+	And(a=z5, b=t7, out=z6);
+	And(a=z6, b=t8, out=z7);
+	And(a=z7, b=t9, out=z8);
+	And(a=z8, b=t10, out=z9);
+	And(a=z9, b=t11, out=z10);
+	And(a=z10, b=t12, out=z11);
+	And(a=z11, b=t13, out=z12);
+	And(a=z12, b=t14, out=z13);
+	And(a=z13, b=t15, out=z14);
+	And(a=z14, b=t16, out=z);
+
+}

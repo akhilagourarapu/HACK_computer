@@ -1,0 +1,9 @@
+/* 3 input AND gate */
+CHIP And3 {
+    IN a, b, c;
+    OUT out;
+
+    PARTS:
+	And(a=a,b=b, out=w1);
+	And(a=c,b=w1, out = out);	
+}

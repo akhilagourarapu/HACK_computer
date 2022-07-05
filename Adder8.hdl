@@ -1,0 +1,47 @@
+/* 8-bit CLA Adder without higher order propagation and generation terms:
+
+X, Y = signed orinsigned 16-bit integers
+abars = 0 for addition, 1 for subtraction
+sig = 0 for unsigned integer, 1 for signed integer
+s = 8-bit sum bits
+c8 = last carry bit
+of = overflow bit
+*/
+CHIP Adder8{
+    IN x[8], y[8], abars, sig;
+    OUT s[8], c8, of;
+
+    PARTS:
+	// Generating 1's complement form for abars = 1, for abars=0, no effect
+	Xor8(a=y, b=abars, out[0..3]=y30, out[4..7]=y74);
+	
+	// Cascading carry look ahead adders to get sum bits and carry bits c4, c8
+	CLA(x=x[0..3], y=y30, c0=abars, s=s[0..3], c4=c4);
+	CLA(x=x[4..7], y=y74, c0=c4, s=s[4..7], c4=c8test);
+	
+	
+	// Generating complement of y[12..14]
+	Xor(a=y[4], b=abars, out=y4);
+	Xor(a=y[5], b=abars, out=y5);
+	Xor(a=y[6], b=abars, out=y6);
+	// Obtaining intermediate carries c12, c13, c14 to get c15 to check for overflow condition (using Full Adders since implemented CLA gate does not output intermediate 		carries)
+	FullAdder(xi=x[4], yi=y4, ci=c4, si=v, cii=c5);
+	FullAdder(xi=x[5], yi=y5, ci=c5, si=b, cii=c6);
+	FullAdder(xi=x[6], yi=y6, ci=c6, si=n, cii=c7);
+	
+	// checking for overflow condition for signed and unsigned:
+	// For signed: Xor(Cn, Cn-1)
+	// For unsigned: Cn
+	// Overflow = sig.Xor(Cn,Cn-1) + sig'.Cn
+	// Thus, correct overflow is generated for both signed and unsigned case
+	And(a=c8test, b=c8test, out=c8);
+	Xor(a=c7, b=c8test, out=signedof);
+	Not(in=sig, out=unsigned);
+	Xor(a=abars, b=c8test, out=c8test1);
+	And(a=c8test1, b=unsigned, out = t1);
+	And(a=signedof, b=sig, out=t2);
+	Or(a=t1, b=t2, out=of);
+	
+ 
+	
+}

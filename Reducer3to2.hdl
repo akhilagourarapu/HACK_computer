@@ -1,0 +1,30 @@
+/* 3-to-2 Reducer
+Takes in 3 16-bit partial products and outputs 16 sum-bits and carry-bits 
+Consists of 16 FullAdders, one for each bit*/
+CHIP Reducer3to2{
+    IN pp0[16], pp1[16], pp2[16];
+    OUT s[16], c[16];
+
+    PARTS:
+	And(a=false, b=false, out=c[0]);
+	FullAdder(xi=pp0[0], yi=pp1[0], ci=pp2[0], si=s[0], cii=c[1]);
+	FullAdder(xi=pp0[1], yi=pp1[1], ci=pp2[1], si=s[1], cii=c[2]);
+	FullAdder(xi=pp0[2], yi=pp1[2], ci=pp2[2], si=s[2], cii=c[3]);
+	FullAdder(xi=pp0[3], yi=pp1[3], ci=pp2[3], si=s[3], cii=c[4]);
+	FullAdder(xi=pp0[4], yi=pp1[4], ci=pp2[4], si=s[4], cii=c[5]);
+	FullAdder(xi=pp0[5], yi=pp1[5], ci=pp2[5], si=s[5], cii=c[6]);
+	FullAdder(xi=pp0[6], yi=pp1[6], ci=pp2[6], si=s[6], cii=c[7]);
+	FullAdder(xi=pp0[7], yi=pp1[7], ci=pp2[7], si=s[7], cii=c[8]);
+	FullAdder(xi=pp0[8], yi=pp1[8], ci=pp2[8], si=s[8], cii=c[9]);
+	FullAdder(xi=pp0[9], yi=pp1[9], ci=pp2[9], si=s[9], cii=c[10]);
+	FullAdder(xi=pp0[10], yi=pp1[10], ci=pp2[10], si=s[10], cii=c[11]);
+	FullAdder(xi=pp0[11], yi=pp1[11], ci=pp2[11], si=s[11], cii=c[12]);
+	FullAdder(xi=pp0[12], yi=pp1[12], ci=pp2[12], si=s[12], cii=c[13]);
+	FullAdder(xi=pp0[13], yi=pp1[13], ci=pp2[13], si=s[13], cii=c[14]);
+	FullAdder(xi=pp0[14], yi=pp1[14], ci=pp2[14], si=s[14], cii=c[15]);
+	FullAdder(xi=pp0[15], yi=pp1[15], ci=pp2[15], si=s[15], cii=ignore); //the last carry bit can be ignored since n-bit x b-bit can never exceed 2n-bits
+
+
+ 
+	
+}

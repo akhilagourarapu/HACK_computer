@@ -1,0 +1,26 @@
+/* Generates X.yi portion of Partial Product for unsigned integers
+After this, shifting needs to be performed to generate full partial product*/
+CHIP PPAnd{
+    IN X[8], yi;
+    OUT out[16];
+
+    PARTS:
+	And(a=X[0], b=yi, out=out[0]);
+	And(a=X[1], b=yi, out=out[1]);
+	And(a=X[2], b=yi, out=out[2]);
+	And(a=X[3], b=yi, out=out[3]);
+	And(a=X[4], b=yi, out=out[4]);
+	And(a=X[5], b=yi, out=out[5]);
+	And(a=X[6], b=yi, out=out[6]);
+	And(a=X[7], b=yi, out=out[7]);
+	And(a=false, b=yi, out=out[8]); // since integer is unsigned, remaining bits are 0s
+	And(a=false, b=yi, out=out[9]);
+	And(a=false, b=yi, out=out[10]);
+	And(a=false, b=yi, out=out[11]);
+	And(a=false, b=yi, out=out[12]);
+	And(a=false, b=yi, out=out[13]);
+	And(a=false, b=yi, out=out[14]);
+	And(a=false, b=yi, out=out[15]);
+	
+
+}

@@ -1,0 +1,19 @@
+/* FullAdder circuit 
+Takes 3 bits at a time and generates sum bit and next carry bit*/
+CHIP FullAdder{
+    IN xi, yi, ci; 
+    OUT si, cii;
+
+    PARTS:
+	And(a=xi,b=yi, out=xiyi); 
+	And(a=xi,b=ci, out = xici);
+	And(a=yi,b=ci,out=yici);
+
+	Or(a=xiyi,b=xici,out=t1); // xi.yi + xi.ci
+	Or(a=t1,b=yici,out=cii); // c(i+1) =  xi.yi + xi.ci + yi.ci
+
+	Xor(a=xi, b=yi, out=t2);
+	Xor(a=t2, b=ci, out=si);// sum-bit = Xor(xi,yi,ci)
+ 
+	
+}

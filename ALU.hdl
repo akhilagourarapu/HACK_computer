@@ -1,0 +1,24 @@
+/*16-bit HACK ALU*/
+CHIP ALU {
+    IN x[16], y[16], zx, nx, zy, ny, f, no; // Inputs and Control Signals
+    OUT out[16], zr, ng; //Output and status bits
+
+    PARTS:
+
+	Mux16bit2to1(a=x, b=false, sel=zx, out=out1); // Chooses between X and zero based on zx
+	Xor16(a=out1, b=nx, out=p); // Decides whether to negate output of mux based on nx; generates p
+
+	Mux16bit2to1(a=y, b=false, sel=zy, out=out2); // Chooses between Y and zero based on zy
+	Xor16(a=out2, b=ny, out=q); // Decides whether to negate output of mux based on ny; generates q
+
+	
+	Adder16(x=p, y=q, abars=false, sig=false, s=pplusq, c16=c161, of=of1); // Adds p and q
+	And16(a=p, b=q, out=pandq); // Computes bitwise AND of p and q
+
+	Mux16bit2to1(a=pandq, b=pplusq, sel=f, out=r); // Chooses between p+q and p&q based on f; generates r
+	Xor16(a=r, b=no, out=out, out[15]=out15, out=outtest); // Decides whether to negate r based on no
+	
+	And(a=true, b=out15, out=ng); // Checks if output is negative
+	Comparator16bit(x=false, y=outtest, z=zr); // Checks if output is zero	
+
+}
